@@ -336,9 +336,26 @@ const PlanSummary: React.FC = () => {
 
 const PlanCreationStepper: React.FC = () => {
   const location = useLocation();
+  const { plan } = usePlanContext();
+  const navigate = useNavigate();
+
   const currentStep = steps.findIndex((step) => 
     location.pathname.includes(step.url)
   );
+
+  const handleStepClick = (index: number) => {
+    // Prevent navigation if the plan doesn't have a name
+    if (index > 0 && !plan.name) {
+      alert("Please name your plan first.");
+      return;
+    }
+    // Prevent navigation to 'Add Items' or later if there are no items
+    if (index > 1 && plan.items.length === 0) {
+      alert("Please add at least one item to your plan.");
+      return;
+    }
+    navigate(`/create-plan/${steps[index].url}`);
+  };
 
   return (
     <Box sx={{ width: '100%', mb: 4 }}>
@@ -348,7 +365,13 @@ const PlanCreationStepper: React.FC = () => {
           const labelProps: { optional?: React.ReactNode } = {};
           return (
             <Step key={step.title} {...stepProps}>
-              <StepLabel {...labelProps}>{step.title}</StepLabel>
+              <StepLabel 
+                {...labelProps} 
+                onClick={() => handleStepClick(index)}
+                sx={{ cursor: 'pointer' }}
+              >
+                {step.title}
+              </StepLabel>
             </Step>
           );
         })}
