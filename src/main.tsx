@@ -9,6 +9,13 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, Container } from '@mui/material';
 import { createBrowserRouter } from 'react-router-dom';
 
+const steps = [
+  { title: 'Name Plan', url: 'name-plan' },
+  { title: 'Add Items', url: 'add-items' },
+  { title: 'Predict Completion', url: 'predict' },
+  { title: 'Summary', url: 'summary' },
+];
+
 interface PlanItem {
   id: number;
   text: string;
@@ -284,20 +291,19 @@ const PlanSummary: React.FC = () => {
 
 const PlanCreationStepper: React.FC = () => {
   const location = useLocation();
-  const steps = ['Name Plan', 'Add Items', 'Predict Completion', 'Summary'];
   const currentStep = steps.findIndex((step) => 
-    location.pathname.includes(step.toLowerCase().replace(' ', '-'))
+    location.pathname.includes(step.url)
   );
 
   return (
     <Box sx={{ width: '100%', mb: 4 }}>
       <Stepper activeStep={currentStep}>
-        {steps.map((label, index) => {
+        {steps.map((step, index) => {
           const stepProps: { completed?: boolean } = {};
           const labelProps: { optional?: React.ReactNode } = {};
           return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
+            <Step key={step.title} {...stepProps}>
+              <StepLabel {...labelProps}>{step.title}</StepLabel>
             </Step>
           );
         })}
@@ -324,22 +330,22 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="name-plan" replace />,
+            element: <Navigate to={steps[0].url} replace />,
           },
           {
-            path: 'name-plan',
+            path: steps[0].url,
             element: <NamePlan />,
           },
           {
-            path: 'add-items',
+            path: steps[1].url,
             element: <AddItems />,
           },
           {
-            path: 'predict',
+            path: steps[2].url,
             element: <PredictCompletion />,
           },
           {
-            path: 'summary',
+            path: steps[3].url,
             element: <PlanSummary />,
           },
         ],
