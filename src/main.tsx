@@ -2,6 +2,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, useNavigate, useLocation, Navigate } from 'react-router-dom'
+// Import necessary hooks and types for React Context
 import { createContext, useState, useContext, ReactNode } from 'react';
 import { List, ListItem, ListItemText, Checkbox, TextField, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Stepper, Step, StepLabel } from '@mui/material';
 import { Link, Outlet } from 'react-router-dom';
@@ -38,11 +39,14 @@ interface PlanContextType {
 
 
 
+// Create a context with a default value of undefined
 const PlanContext = createContext<PlanContextType | undefined>(undefined);
 
+// Custom hook to use the PlanContext
 const usePlanContext = (): PlanContextType => {
   const context = useContext(PlanContext);
   if (!context) {
+    // Ensure the hook is used within a PlanProvider
     throw new Error('usePlanContext must be used within a PlanProvider');
   }
   return context;
@@ -52,9 +56,12 @@ interface PlanProviderProps {
   children: ReactNode;
 }
 
+// PlanProvider component to wrap the app and provide the context
 const PlanProvider: React.FC<PlanProviderProps> = ({ children }) => {
+  // State to hold the plan data
   const [plan, setPlan] = useState<Plan>({ name: '', items: [] });
 
+  // Functions to update the plan state
   const setName = (name: string) => {
     setPlan(prevPlan => ({ ...prevPlan, name }));
   };
@@ -79,6 +86,7 @@ const PlanProvider: React.FC<PlanProviderProps> = ({ children }) => {
     setPlan({ name: '', items: [] });
   };
 
+  // Create an object with the context value
   const contextValue: PlanContextType = {
     plan,
     setName,
@@ -87,6 +95,7 @@ const PlanProvider: React.FC<PlanProviderProps> = ({ children }) => {
     resetPlan
   };
 
+  // Provide the context value to all child components
   return (
     <PlanContext.Provider value={contextValue}>
       {children}
@@ -94,7 +103,9 @@ const PlanProvider: React.FC<PlanProviderProps> = ({ children }) => {
   );
 };
 
+// Home component using the PlanContext
 const Home: React.FC = () => {
+  // Access the plan data from the context
   const { plan } = usePlanContext();
 
   return (
@@ -118,9 +129,11 @@ const Home: React.FC = () => {
 
 const theme = createTheme();
 
+// Main App component
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
+      {/* Wrap the entire app with PlanProvider to make context available */}
       <PlanProvider>
         <AppBar position="static">
           <Toolbar>
@@ -140,7 +153,9 @@ const App: React.FC = () => {
 }
 
 
+// NamePlan component for the first step of plan creation
 const NamePlan: React.FC = () => {
+  // Access plan data and setName function from context
   const { plan, setName } = usePlanContext();
   const navigate = useNavigate();
 
@@ -167,7 +182,9 @@ const NamePlan: React.FC = () => {
   );
 };
 
+// AddItems component for adding items to the plan
 const AddItems: React.FC = () => {
+  // Access plan data and addItem function from context
   const { plan, addItem } = usePlanContext();
   const [newItem, setNewItem] = useState('');
   const navigate = useNavigate();
@@ -214,7 +231,9 @@ const AddItems: React.FC = () => {
   );
 };
 
+// PredictCompletion component for predicting item completion
 const PredictCompletion: React.FC = () => {
+  // Access plan data and togglePredicted function from context
   const { plan, togglePredicted } = usePlanContext();
   const navigate = useNavigate();
 
@@ -243,7 +262,9 @@ const PredictCompletion: React.FC = () => {
   );
 };
 
+// PlanSummary component to display the final plan
 const PlanSummary: React.FC = () => {
+  // Access plan data and resetPlan function from context
   const { plan, resetPlan } = usePlanContext();
   const navigate = useNavigate();
 
