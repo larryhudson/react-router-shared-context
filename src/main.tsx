@@ -28,8 +28,6 @@ interface PlanContextType {
   resetPlan: () => void;
 }
 
-import { Stepper, Step, StepLabel } from '@mui/material';
-
 const PlanForm: React.FC = () => {
   const { plan, setName, addItem, togglePredicted, resetPlan } = usePlanContext();
   const [activeStep, setActiveStep] = useState(0);
@@ -230,7 +228,7 @@ const Home: React.FC = () => {
       </Typography>
       {plan.name ? (
         <Typography variant="body1">
-          Your current plan "{plan.name}" has {plan.items.length} items, 
+          Your current plan "{plan.name}" has {plan.items.length} items,
           with {plan.items.filter(item => item.predicted).length} predicted to complete.
         </Typography>
       ) : (
