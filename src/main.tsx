@@ -70,6 +70,9 @@ const PlanForm: React.FC = () => {
       case 1:
         return (
           <>
+            <Typography variant="h6" gutterBottom>
+              Plan: {plan.name}
+            </Typography>
             <TextField
               fullWidth
               label="New Item"
