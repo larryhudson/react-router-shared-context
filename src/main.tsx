@@ -132,45 +132,7 @@ const App: React.FC = () => {
   );
 }
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <App />,
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: 'create-plan',
-        children: [
-          {
-            index: true,
-            element: <NamePlan />,
-          },
-          {
-            path: 'add-items',
-            element: <AddItems />,
-          },
-          {
-            path: 'predict',
-            element: <PredictCompletion />,
-          },
-          {
-            path: 'summary',
-            element: <PlanSummary />,
-          },
-        ],
-      },
-    ],
-  },
-]);
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>,
-)
 const NamePlan: React.FC = () => {
   const { plan, setName } = usePlanContext();
   const navigate = useNavigate();
@@ -319,3 +281,43 @@ const PlanSummary: React.FC = () => {
     </Box>
   );
 };
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: 'create-plan',
+        children: [
+          {
+            index: true,
+            element: <NamePlan />,
+          },
+          {
+            path: 'add-items',
+            element: <AddItems />,
+          },
+          {
+            path: 'predict',
+            element: <PredictCompletion />,
+          },
+          {
+            path: 'summary',
+            element: <PlanSummary />,
+          },
+        ],
+      },
+    ],
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
+)
