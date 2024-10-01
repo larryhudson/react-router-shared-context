@@ -1,9 +1,9 @@
 // src/main.tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider } from 'react-router-dom'
+import { RouterProvider, useNavigate } from 'react-router-dom'
 import { createContext, useState, useContext, ReactNode } from 'react';
-import { List, ListItem, ListItemText, Checkbox, TextField, Button, Box, Step, StepLabel, Stepper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { List, ListItem, ListItemText, Checkbox, TextField, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { Link, Outlet } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, Container } from '@mui/material';
@@ -28,162 +28,6 @@ interface PlanContextType {
   resetPlan: () => void;
 }
 
-const PlanForm: React.FC = () => {
-  const { plan, setName, addItem, togglePredicted, resetPlan } = usePlanContext();
-  const [activeStep, setActiveStep] = useState(0);
-  const [newItem, setNewItem] = useState('');
-
-  const steps = ['Name Your Plan', 'Add Items', 'Predict Completion', 'Save Plan'];
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-    resetPlan();
-  };
-
-  const handleAddItem = () => {
-    if (newItem.trim()) {
-      addItem(newItem.trim());
-      setNewItem('');
-    }
-  };
-
-  const renderStepContent = (step: number) => {
-    switch (step) {
-      case 0:
-        return (
-          <TextField
-            fullWidth
-            label="Plan Name"
-            value={plan.name}
-            onChange={(e) => setName(e.target.value)}
-            margin="normal"
-          />
-        );
-      case 1:
-        return (
-          <>
-            <Typography variant="h6" gutterBottom>
-              Plan: {plan.name}
-            </Typography>
-            <TextField
-              fullWidth
-              label="New Item"
-              value={newItem}
-              onChange={(e) => setNewItem(e.target.value)}
-              margin="normal"
-            />
-            <Button onClick={handleAddItem} variant="contained" sx={{ mt: 2 }}>
-              Add Item
-            </Button>
-            <List sx={{ mt: 2 }}>
-              {plan.items.map((item) => (
-                <ListItem key={item.id}>
-                  <ListItemText primary={item.text} />
-                </ListItem>
-              ))}
-            </List>
-          </>
-        );
-      case 2:
-        return (
-          <List>
-            {plan.items.map((item) => (
-              <ListItem key={item.id}>
-                <Checkbox
-                  checked={item.predicted}
-                  onChange={() => togglePredicted(item.id)}
-                />
-                <ListItemText primary={item.text} />
-              </ListItem>
-            ))}
-          </List>
-        );
-      case 3:
-        return (
-          <Box>
-            <Typography variant="h6" gutterBottom>Plan Summary</Typography>
-            <Typography gutterBottom>Name: {plan.name}</Typography>
-            <Typography gutterBottom>Total Items: {plan.items.length}</Typography>
-            <Typography gutterBottom>
-              Predicted to complete: {plan.items.filter((item) => item.predicted).length}
-            </Typography>
-            <TableContainer component={Paper} sx={{ mt: 2 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Item</TableCell>
-                    <TableCell align="right">Predicted to Complete</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {plan.items.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell component="th" scope="row">
-                        {item.text}
-                      </TableCell>
-                      <TableCell align="right">
-                        {item.predicted ? 'Yes' : 'No'}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <Box sx={{ width: '100%' }}>
-      <Stepper activeStep={activeStep}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <Box sx={{ mt: 4 }}>
-        {activeStep === steps.length ? (
-          <>
-            <Typography>All steps completed - you're finished</Typography>
-            <Button onClick={handleReset} sx={{ mt: 2 }}>
-              Reset
-            </Button>
-          </>
-        ) : (
-          <>
-            {renderStepContent(activeStep)}
-            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Box sx={{ flex: '1 1 auto' }} />
-              <Button onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              </Button>
-            </Box>
-          </>
-        )}
-      </Box>
-    </Box>
-  );
-};
 
 
 
@@ -299,7 +143,24 @@ const router = createBrowserRouter([
       },
       {
         path: 'create-plan',
-        element: <PlanForm />,
+        children: [
+          {
+            index: true,
+            element: <NamePlan />,
+          },
+          {
+            path: 'add-items',
+            element: <AddItems />,
+          },
+          {
+            path: 'predict',
+            element: <PredictCompletion />,
+          },
+          {
+            path: 'summary',
+            element: <PlanSummary />,
+          },
+        ],
       },
     ],
   },
@@ -310,3 +171,151 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <RouterProvider router={router} />
   </React.StrictMode>,
 )
+const NamePlan: React.FC = () => {
+  const { plan, setName } = usePlanContext();
+  const navigate = useNavigate();
+
+  const handleNext = () => {
+    if (plan.name.trim()) {
+      navigate('/create-plan/add-items');
+    }
+  };
+
+  return (
+    <Box>
+      <Typography variant="h6" gutterBottom>Name Your Plan</Typography>
+      <TextField
+        fullWidth
+        label="Plan Name"
+        value={plan.name}
+        onChange={(e) => setName(e.target.value)}
+        margin="normal"
+      />
+      <Button onClick={handleNext} variant="contained" sx={{ mt: 2 }}>
+        Next
+      </Button>
+    </Box>
+  );
+};
+
+const AddItems: React.FC = () => {
+  const { plan, addItem } = usePlanContext();
+  const [newItem, setNewItem] = useState('');
+  const navigate = useNavigate();
+
+  const handleAddItem = () => {
+    if (newItem.trim()) {
+      addItem(newItem.trim());
+      setNewItem('');
+    }
+  };
+
+  const handleNext = () => {
+    if (plan.items.length > 0) {
+      navigate('/create-plan/predict');
+    }
+  };
+
+  return (
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        Plan: {plan.name}
+      </Typography>
+      <TextField
+        fullWidth
+        label="New Item"
+        value={newItem}
+        onChange={(e) => setNewItem(e.target.value)}
+        margin="normal"
+      />
+      <Button onClick={handleAddItem} variant="contained" sx={{ mt: 2, mr: 2 }}>
+        Add Item
+      </Button>
+      <Button onClick={handleNext} variant="contained" sx={{ mt: 2 }}>
+        Next
+      </Button>
+      <List sx={{ mt: 2 }}>
+        {plan.items.map((item) => (
+          <ListItem key={item.id}>
+            <ListItemText primary={item.text} />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+};
+
+const PredictCompletion: React.FC = () => {
+  const { plan, togglePredicted } = usePlanContext();
+  const navigate = useNavigate();
+
+  const handleNext = () => {
+    navigate('/create-plan/summary');
+  };
+
+  return (
+    <Box>
+      <Typography variant="h6" gutterBottom>Predict Completion</Typography>
+      <List>
+        {plan.items.map((item) => (
+          <ListItem key={item.id}>
+            <Checkbox
+              checked={item.predicted}
+              onChange={() => togglePredicted(item.id)}
+            />
+            <ListItemText primary={item.text} />
+          </ListItem>
+        ))}
+      </List>
+      <Button onClick={handleNext} variant="contained" sx={{ mt: 2 }}>
+        Next
+      </Button>
+    </Box>
+  );
+};
+
+const PlanSummary: React.FC = () => {
+  const { plan, resetPlan } = usePlanContext();
+  const navigate = useNavigate();
+
+  const handleReset = () => {
+    resetPlan();
+    navigate('/');
+  };
+
+  return (
+    <Box>
+      <Typography variant="h6" gutterBottom>Plan Summary</Typography>
+      <Typography gutterBottom>Name: {plan.name}</Typography>
+      <Typography gutterBottom>Total Items: {plan.items.length}</Typography>
+      <Typography gutterBottom>
+        Predicted to complete: {plan.items.filter((item) => item.predicted).length}
+      </Typography>
+      <TableContainer component={Paper} sx={{ mt: 2 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Item</TableCell>
+              <TableCell align="right">Predicted to Complete</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {plan.items.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell component="th" scope="row">
+                  {item.text}
+                </TableCell>
+                <TableCell align="right">
+                  {item.predicted ? 'Yes' : 'No'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Button onClick={handleReset} variant="contained" sx={{ mt: 2 }}>
+        Create New Plan
+      </Button>
+    </Box>
+  );
+};
