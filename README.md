@@ -18,17 +18,19 @@ React Context provides a way to pass data through the component tree without hav
 
 ## Project Structure
 
-The main components of this project are:
+The main component of this project is:
 
-- `src/main.tsx`: Entry point of the application, sets up the React app with the PlanProvider
-- `PlanContext.tsx`: Defines the Plan context and provides the PlanProvider component
-- Various view components that consume the PlanContext
+- `src/main.tsx`: Entry point of the application, which includes:
+  - Definition of the Plan context
+  - The PlanProvider component
+  - Various view components that consume the PlanContext
+  - React Router setup
 
 ## How It Works
 
-1. The `PlanContext` is created with an initial state and functions to modify the state.
-2. The `PlanProvider` wraps the main application, making the context available to all child components.
-3. Child components use the `useContext` hook to access the shared state and functions from the PlanContext.
+1. The `PlanContext` is created within `main.tsx` with an initial state and functions to modify the state.
+2. The `PlanProvider` component is defined in `main.tsx` and wraps the main application, making the context available to all child components.
+3. Child components use the `usePlanContext` custom hook to access the shared state and functions from the PlanContext.
 4. Components can read the current state and call functions to update it, which will automatically re-render any components that depend on that state.
 
 ## Benefits
