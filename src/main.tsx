@@ -36,9 +36,6 @@ interface PlanContextType {
   resetPlan: () => void;
 }
 
-
-
-
 // Create a context with a default value of undefined
 const PlanContext = createContext<PlanContextType | undefined>(undefined);
 
@@ -156,7 +153,7 @@ const App: React.FC = () => {
             <Button color="inherit" component={Link} to="/create-plan">Create Plan</Button>
           </Toolbar>
         </AppBar>
-        <Container>
+        <Container sx={{ mt: 4 }}>
           <Outlet />
         </Container>
       </PlanProvider>
@@ -339,7 +336,7 @@ const PlanCreationStepper: React.FC = () => {
   const { plan } = usePlanContext();
   const navigate = useNavigate();
 
-  const currentStep = steps.findIndex((step) => 
+  const currentStep = steps.findIndex((step) =>
     location.pathname.includes(step.url)
   );
 
@@ -365,8 +362,8 @@ const PlanCreationStepper: React.FC = () => {
           const labelProps: { optional?: React.ReactNode } = {};
           return (
             <Step key={step.title} {...stepProps}>
-              <StepLabel 
-                {...labelProps} 
+              <StepLabel
+                {...labelProps}
                 onClick={() => handleStepClick(index)}
                 sx={{ cursor: 'pointer' }}
               >
