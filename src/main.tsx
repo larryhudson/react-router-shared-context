@@ -1,7 +1,7 @@
 // src/main.tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider, useNavigate, useLocation } from 'react-router-dom'
+import { RouterProvider, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { createContext, useState, useContext, ReactNode } from 'react';
 import { List, ListItem, ListItemText, Checkbox, TextField, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Stepper, Step, StepLabel } from '@mui/material';
 import { Link, Outlet } from 'react-router-dom';
@@ -285,11 +285,9 @@ const PlanSummary: React.FC = () => {
 const PlanCreationStepper: React.FC = () => {
   const location = useLocation();
   const steps = ['Name Plan', 'Add Items', 'Predict Completion', 'Summary'];
-  const currentStep = location.pathname === '/create-plan' ? 0 : 
-    steps.findIndex((step, index) => 
-      index === 0 ? location.pathname === '/create-plan' : 
-      location.pathname.includes(step.toLowerCase().replace(' ', '-'))
-    );
+  const currentStep = steps.findIndex((step) => 
+    location.pathname.includes(step.toLowerCase().replace(' ', '-'))
+  );
 
   return (
     <Box sx={{ width: '100%', mb: 4 }}>
@@ -326,6 +324,10 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
+            element: <Navigate to="name-plan" replace />,
+          },
+          {
+            path: 'name-plan',
             element: <NamePlan />,
           },
           {
