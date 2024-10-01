@@ -3,7 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 import { createContext, useState, useContext, ReactNode } from 'react';
-import { List, ListItem, ListItemText, Checkbox, TextField, Button, Box, Step, StepLabel, Stepper } from '@mui/material';
+import { List, ListItem, ListItemText, Checkbox, TextField, Button, Box, Step, StepLabel, Stepper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { Link, Outlet } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, Container } from '@mui/material';
@@ -106,12 +106,34 @@ const PlanForm: React.FC = () => {
       case 3:
         return (
           <Box>
-            <Typography variant="h6">Plan Summary</Typography>
-            <Typography>Name: {plan.name}</Typography>
-            <Typography>Items: {plan.items.length}</Typography>
-            <Typography>
+            <Typography variant="h6" gutterBottom>Plan Summary</Typography>
+            <Typography gutterBottom>Name: {plan.name}</Typography>
+            <Typography gutterBottom>Total Items: {plan.items.length}</Typography>
+            <Typography gutterBottom>
               Predicted to complete: {plan.items.filter((item) => item.predicted).length}
             </Typography>
+            <TableContainer component={Paper} sx={{ mt: 2 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Item</TableCell>
+                    <TableCell align="right">Predicted to Complete</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {plan.items.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell component="th" scope="row">
+                        {item.text}
+                      </TableCell>
+                      <TableCell align="right">
+                        {item.predicted ? 'Yes' : 'No'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Box>
         );
       default:
