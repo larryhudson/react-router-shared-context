@@ -1,9 +1,9 @@
 // src/main.tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider, useNavigate } from 'react-router-dom'
+import { RouterProvider, useNavigate, useLocation } from 'react-router-dom'
 import { createContext, useState, useContext, ReactNode } from 'react';
-import { List, ListItem, ListItemText, Checkbox, TextField, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { List, ListItem, ListItemText, Checkbox, TextField, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Stepper, Step, StepLabel } from '@mui/material';
 import { Link, Outlet } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, Container } from '@mui/material';
@@ -282,6 +282,31 @@ const PlanSummary: React.FC = () => {
   );
 };
 
+const PlanCreationStepper: React.FC = () => {
+  const location = useLocation();
+  const steps = ['Name Plan', 'Add Items', 'Predict Completion', 'Summary'];
+  const currentStep = steps.findIndex(step => location.pathname.includes(step.toLowerCase().replace(' ', '-')));
+
+  return (
+    <Box sx={{ width: '100%', mb: 4 }}>
+      <Stepper activeStep={currentStep}>
+        {steps.map((label, index) => {
+          const stepProps: { completed?: boolean } = {};
+          const labelProps: { optional?: React.ReactNode } = {};
+          return (
+            <Step key={label} {...stepProps}>
+              <StepLabel {...labelProps}>{label}</StepLabel>
+            </Step>
+          );
+        })}
+      </Stepper>
+      <Box sx={{ mt: 4 }}>
+        <Outlet />
+      </Box>
+    </Box>
+  );
+};
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -293,6 +318,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'create-plan',
+        element: <PlanCreationStepper />,
         children: [
           {
             index: true,
