@@ -285,7 +285,11 @@ const PlanSummary: React.FC = () => {
 const PlanCreationStepper: React.FC = () => {
   const location = useLocation();
   const steps = ['Name Plan', 'Add Items', 'Predict Completion', 'Summary'];
-  const currentStep = location.pathname === '/create-plan' ? 0 : steps.findIndex(step => location.pathname.includes(step.toLowerCase().replace(' ', '-')));
+  const currentStep = location.pathname === '/create-plan' ? 0 : 
+    steps.findIndex((step, index) => 
+      index === 0 ? location.pathname === '/create-plan' : 
+      location.pathname.includes(step.toLowerCase().replace(' ', '-'))
+    );
 
   return (
     <Box sx={{ width: '100%', mb: 4 }}>
