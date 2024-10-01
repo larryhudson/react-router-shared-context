@@ -113,14 +113,26 @@ const Home: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Welcome to the Plan Creator
       </Typography>
+      <Typography variant="body1" paragraph>
+        This app demonstrates the use of React Context for state management and React Router for navigation.
+      </Typography>
+      <Typography variant="body1" paragraph>
+        Create a new plan by clicking the "Create Plan" button in the navigation bar. You'll go through a 4-step process:
+      </Typography>
+      <ol>
+        <li>Name your plan</li>
+        <li>Add items to your plan</li>
+        <li>Predict which items you'll complete</li>
+        <li>Review a summary of your plan</li>
+      </ol>
       {plan.name ? (
-        <Typography variant="body1">
+        <Typography variant="body1" sx={{ mt: 2 }}>
           Your current plan "{plan.name}" has {plan.items.length} items,
           with {plan.items.filter(item => item.predicted).length} predicted to complete.
         </Typography>
       ) : (
-        <Typography variant="body1">
-          Start creating your plan by clicking on the "Create Plan" button above.
+        <Typography variant="body1" sx={{ mt: 2 }}>
+          You haven't created a plan yet. Start by clicking the "Create Plan" button above.
         </Typography>
       )}
     </Box>
@@ -167,7 +179,10 @@ const NamePlan: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>Name Your Plan</Typography>
+      <Typography variant="h6" gutterBottom>Step 1: Name Your Plan</Typography>
+      <Typography variant="body1" paragraph>
+        Give your plan a meaningful name. This name will be used throughout the process.
+      </Typography>
       <TextField
         fullWidth
         label="Plan Name"
@@ -175,7 +190,7 @@ const NamePlan: React.FC = () => {
         onChange={(e) => setName(e.target.value)}
         margin="normal"
       />
-      <Button onClick={handleNext} variant="contained" sx={{ mt: 2 }}>
+      <Button onClick={handleNext} variant="contained" sx={{ mt: 2 }} disabled={!plan.name.trim()}>
         Next
       </Button>
     </Box>
@@ -205,7 +220,10 @@ const AddItems: React.FC = () => {
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
-        Plan: {plan.name}
+        Step 2: Add Items to "{plan.name}"
+      </Typography>
+      <Typography variant="body1" paragraph>
+        Add items to your plan. You can add as many items as you need.
       </Typography>
       <TextField
         fullWidth
@@ -214,10 +232,10 @@ const AddItems: React.FC = () => {
         onChange={(e) => setNewItem(e.target.value)}
         margin="normal"
       />
-      <Button onClick={handleAddItem} variant="contained" sx={{ mt: 2, mr: 2 }}>
+      <Button onClick={handleAddItem} variant="contained" sx={{ mt: 2, mr: 2 }} disabled={!newItem.trim()}>
         Add Item
       </Button>
-      <Button onClick={handleNext} variant="contained" sx={{ mt: 2 }}>
+      <Button onClick={handleNext} variant="contained" sx={{ mt: 2 }} disabled={plan.items.length === 0}>
         Next
       </Button>
       <List sx={{ mt: 2 }}>
@@ -243,7 +261,10 @@ const PredictCompletion: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>Predict Completion</Typography>
+      <Typography variant="h6" gutterBottom>Step 3: Predict Completion</Typography>
+      <Typography variant="body1" paragraph>
+        Check the items you predict you'll complete. This helps in prioritizing your tasks.
+      </Typography>
       <List>
         {plan.items.map((item) => (
           <ListItem key={item.id}>
@@ -275,7 +296,10 @@ const PlanSummary: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>Plan Summary</Typography>
+      <Typography variant="h6" gutterBottom>Step 4: Plan Summary</Typography>
+      <Typography variant="body1" paragraph>
+        Here's a summary of your plan. You can create a new plan or return to the home page.
+      </Typography>
       <Typography gutterBottom>Name: {plan.name}</Typography>
       <Typography gutterBottom>Total Items: {plan.items.length}</Typography>
       <Typography gutterBottom>
